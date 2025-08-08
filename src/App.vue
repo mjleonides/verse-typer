@@ -4,8 +4,9 @@
   </header>
 
   <main>
+    <h2>{{ chapter?.book.commonName }} {{ chapter?.chapter.number }} ({{ chapter?.translation.shortName }})</h2>
 
-    <p>
+    <p class="typer-challenge-text">
       <span v-for="(item, idx) in typerData" :key="`${idx} - ${item.char}`" :class="{ 'is-success': item.isSuccess, 'is-failed': item.isSuccess === false, 'is-current': item.isCurrent }" >{{ item.char }}</span>
     </p>
 
@@ -28,6 +29,19 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from "vue"
+import useRandomGenerator from "@/utils/useRandomGenerator"
+import type { ChapterData } from "@/types"
+
+const { getRandomChapter, createChallengeString } = useRandomGenerator()
+
+const chapter = ref<ChapterData | undefined>()
+
+
+const getChapter = async () => {
+  chapter.value = await getRandomChapter()
+}
+
+getChapter()
 
 /**
  * Keeps DOM focus on typerInput
@@ -46,9 +60,9 @@ const typerInput = ref()
 const typerInputValue = defineModel()
 /**
  * Typing challenge string
- * @type {string}
+ * @type {string}O
  */
-const typerString = ref("Test longer sentence.")
+const typerString = computed(() => chapter.value ? createChallengeString(chapter.value) : "")
 /**
  * Ref for keeping track of challenge data (letter success/fail, etc.)
  */
@@ -176,5 +190,9 @@ body {
   opacity: 0;
   height: 0;
   width: 0;
+}
+
+.typer-challenge-text {
+  font-size: 1.5rem;
 }
 </style>
