@@ -9,22 +9,26 @@
     <p class="typer-challenge-text">
       <span v-for="(item, idx) in typerData" :key="`${idx} - ${item.char}`" :class="{ 'is-success': item.isSuccess, 'is-failed': item.isSuccess === false, 'is-current': item.isCurrent }" >{{ item.char }}</span>
     </p>
-
-    <p v-if="typerComplete">Done! {{ typedTime }} seconds</p>
+    <div v-if="typerComplete">
+      <p>
+        Done!
+      </p>
+       <p>
+          Total Time: {{ typedTime }} seconds - {{ wpmAverage }} WPM
+      </p>
+    </div>
     <p v-else>Current Key: {{ currentItem?.char }}</p>
 
     <input ref="typerInput" id="typer-input" name="typer-input" autofocus type="text" :class="{ 'typer-input--hidden': !debug }" v-model="typerInputValue"  @keyup="(event) => handleKeydown(event)"/>
 
-  </main>
-
-  <footer>
-    <button @click="setData">Reset</button>
     <div>
-      <input id="debug" type="checkbox" name="debug"  v-model="debug">
-      <label for="debug">Debug</label>
+      <button @click="setData">Reset</button>
+      <div>
+        <input id="debug" type="checkbox" name="debug"  v-model="debug">
+        <label for="debug">Debug</label>
+      </div>
     </div>
-
-  </footer>
+  </main>
 </template>
 
 <script setup lang="ts">
@@ -101,6 +105,8 @@ const typedTime = computed(() => (endTime.value - startTime.value) / 1000)
  * @type {boolean}
  */
 const debug = ref(false);
+const charCount = computed(() => typerData.value.length)
+const wpmAverage = computed(() => Math.floor((charCount.value / 5) / (typedTime.value / 60)))
 
 interface TyperDataItem {
   char: string;
