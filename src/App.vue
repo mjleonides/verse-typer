@@ -4,11 +4,15 @@
   </header>
 
   <main>
-    <h2>{{ chapter?.book.commonName }} {{ chapter?.chapter.number }} ({{ chapter?.translation.shortName }})</h2>
+    <h2 v-if="chapter">{{ chapter?.book.commonName }} {{ chapter?.chapter.number }} ({{ chapter?.translation.shortName }})</h2>
+    <Skeleton v-else width="30rem"/>
 
-    <p class="typer-challenge-text">
+    <p v-if="chapter" class="typer-challenge-text">
       <span v-for="(item, idx) in typerData" :key="`${idx} - ${item.char}`" :class="{ 'is-success': item.isSuccess, 'is-failed': item.isSuccess === false, 'is-current': item.isCurrent }" >{{ item.char }}</span>
     </p>
+    <Skeleton v-else paragraph />
+
+
     <div v-if="typerComplete">
       <p>
         Done!
@@ -34,6 +38,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from "vue"
 import useRandomGenerator from "@/utils/useRandomGenerator"
+import Skeleton from "@/components/Skeleton.vue"
 import type { ChapterData } from "@/types"
 
 const { getRandomChapter, createChallengeString } = useRandomGenerator()
