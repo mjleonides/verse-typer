@@ -4,10 +4,10 @@
   </header>
 
   <main>
-    <h2 v-if="chapter">{{ chapter?.book.commonName }} {{ chapter?.chapter.number }} ({{ chapter?.translation.shortName }})</h2>
+    <h2 v-if="scripture">{{ scripture?.book }} {{ scripture?.chapter }} ({{ scripture?.translation }})</h2>
     <Skeleton v-else width="30rem"/>
 
-    <p v-if="chapter" class="typer-challenge-text">
+    <p v-if="scripture" class="typer-challenge-text">
       <span v-for="(item, idx) in typerData" :key="`${idx} - ${item.char}`" :class="{ 'is-success': item.isSuccess, 'is-failed': item.isSuccess === false, 'is-current': item.isCurrent }" >{{ item.char }}</span>
     </p>
     <Skeleton v-else paragraph />
@@ -37,20 +37,19 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from "vue"
-import useRandomGenerator from "@/utils/useRandomGenerator"
+import useHelloAo from "@/composables/useHelloAo"
 import Skeleton from "@/components/Skeleton.vue"
-import type { ChapterData } from "@/types"
+import type { TyperDataItem, ScriptureData } from "@/types"
 
-const { getRandomChapter, createChallengeString } = useRandomGenerator()
+const { getScripture } = useHelloAo()
 
-const chapter = ref<ChapterData | undefined>()
+const scripture = ref<ScriptureData | undefined>()
 
-
-const getChapter = async () => {
-  chapter.value = await getRandomChapter()
+const getScriptureData = async () => {
+  scripture.value = await getScripture()
 }
 
-getChapter()
+getScriptureData()
 
 /**
  * Keeps DOM focus on typerInput
@@ -71,7 +70,7 @@ const typerInputValue = defineModel()
  * Typing challenge string
  * @type {string}O
  */
-const typerString = computed(() => chapter.value ? createChallengeString(chapter.value) : "")
+const typerString = computed(() => scripture.value ? scripture.value.content : "")
 /**
  * Ref for keeping track of challenge data (letter success/fail, etc.)
  */
@@ -106,18 +105,14 @@ const endTime = ref()
  */
 const typedTime = computed(() => (endTime.value - startTime.value) / 1000)
 /**
+ * Calculated words per minute typed (uses char count of typer string divided by 5 for avg len of word)
+ */
+const wpmAverage = computed(() => Math.floor((typerData.value.length / 5) / (typedTime.value / 60)))
+/**
  * Debug features toggle
  * @type {boolean}
  */
 const debug = ref(false);
-const charCount = computed(() => typerData.value.length)
-const wpmAverage = computed(() => Math.floor((charCount.value / 5) / (typedTime.value / 60)))
-
-interface TyperDataItem {
-  char: string;
-  isCurrent: boolean;
-  isSuccess: boolean | undefined;
-}
 
 /**
  * Sets ref for keeping track of challenge data (letter success/fail, etc.)
