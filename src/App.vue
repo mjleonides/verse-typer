@@ -4,7 +4,7 @@
   </header>
 
   <main>
-    <h2 v-if="scripture">{{ scripture?.book }} {{ scripture?.chapter }} ({{ scripture?.translation }})</h2>
+    <h2 v-if="scripture">{{ scripture?.book }} {{ scripture?.chapter }}: {{ scripture?.verseStart }} - {{ scripture?.verseEnd }} ({{ scripture?.translation }})</h2>
     <Skeleton v-else width="30rem"/>
 
     <p v-if="scripture" class="typer-challenge-text">
@@ -43,13 +43,12 @@ import type { TyperDataItem, ScriptureData } from "@/types"
 
 const { getScripture } = useHelloAo()
 
-const scripture = ref<ScriptureData | undefined>()
+const scripture = ref<ScriptureData | undefined>();
 
-const getScriptureData = async () => {
-  scripture.value = await getScripture()
-}
 
-getScriptureData()
+(async function () {
+  scripture.value = await getScripture();
+})();
 
 /**
  * Keeps DOM focus on typerInput
