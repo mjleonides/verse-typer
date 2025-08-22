@@ -4,29 +4,30 @@
   </header>
 
   <main>
-    <h2 v-if="scripture">{{ scripture?.book }} {{ scripture?.chapter }}: {{ scripture?.verseStart }} - {{ scripture?.verseEnd }} ({{ scripture?.translation }})</h2>
+    <h2 v-if="store.challengeActive">{{ store.scripture?.book }} {{ store.scripture?.chapter }}: {{ store.scripture?.verseStart }} - {{ store.scripture?.verseEnd }} ({{ store.scripture?.translation }})</h2>
     <Skeleton v-else width="30rem"/>
 
-    <p v-if="scripture" class="typer-challenge-text">
-      <span v-for="(item, idx) in typerData" :key="`${idx} - ${item.char}`" :class="{ 'is-success': item.isSuccess, 'is-failed': item.isSuccess === false, 'is-current': item.isCurrent }" >{{ item.char }}</span>
+    <p v-if="store.challengeActive" class="typer-challenge-text">
+      <span v-for="(item, idx) in store.challengeData" :key="`${idx} - ${item.char}`" :class="{ 'is-success': item.isSuccess, 'is-failed': item.isSuccess === false, 'is-current': item.isCurrent }" >{{ item.char }}</span>
     </p>
     <Skeleton v-else paragraph />
 
 
-    <div v-if="typerComplete">
+    <div v-if="store.challengeComplete">
       <p>
         Done!
       </p>
        <p>
-          Total Time: {{ typedTime }} seconds - {{ wpmAverage }} WPM
+          Total Time: {{ store.challengeTime }} seconds - {{ store.wpmAverage }} WPM
       </p>
     </div>
-    <p v-else>Current Key: {{ currentItem?.char }}</p>
+    <!-- <p v-else>Current Key: {{ currentItem?.char }}</p> -->
 
-    <input ref="typerInput" id="typer-input" name="typer-input" autofocus type="text" :class="{ 'typer-input--hidden': !debug }" v-model="typerInputValue"  @keyup="(event) => handleKeydown(event)"/>
+    <input ref="typerInput" id="typer-input" name="typer-input" autofocus type="text" :class="{ 'typer-input--hidden': !debug }" v-model="typerInputValue"  @keyup="(event) => store.handleKeypress(event)"/>
 
     <div>
-      <button @click="setData">Reset</button>
+      <button @click="store.startChallenge">Start Challenge</button>
+      <button @click="store.setChallengeData">Reset</button>
       <div>
         <input id="debug" type="checkbox" name="debug"  v-model="debug">
         <label for="debug">Debug</label>
@@ -36,19 +37,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from "vue"
-import useHelloAo from "@/composables/useHelloAo"
+import { ref } from "vue"
 import Skeleton from "@/components/Skeleton.vue"
-import type { TyperDataItem, ScriptureData } from "@/types"
+import { useTyperStore } from "@/stores/typer"
 
-const { getScripture } = useHelloAo()
+const store = useTyperStore()
 
-const scripture = ref<ScriptureData | undefined>();
-
-
-(async function () {
-  scripture.value = await getScripture();
-})();
 
 /**
  * Keeps DOM focus on typerInput
@@ -66,110 +60,10 @@ const typerInput = ref()
  */
 const typerInputValue = defineModel()
 /**
- * Typing challenge string
- * @type {string}O
- */
-const typerString = computed(() => scripture.value ? scripture.value.content : "")
-/**
- * Ref for keeping track of challenge data (letter success/fail, etc.)
- */
-const typerData = ref<TyperDataItem[]>([])
-/**
- * Current typerString char being evaluated
- */
-const currentItem = computed(() => typerData.value.find((item) => item.isCurrent))
-/**
- * Index of typerString char being evaluated
- * @type {number}
- */
-const currentItemIndex = computed(() => typerData.value.findIndex((item) => item.isCurrent))
-/**
- * Whether or not challenge is complete
- * @type {boolean}
- */
-const typerComplete = computed(() => currentItem.value === undefined)
-/**
- * Timestamp of first correct keystroke
- * @type {date}
- */
-const startTime = ref()
-/**
- * Timestamp of the success of the last char in typerString
- * @type {date}
- */
-const endTime = ref()
-/**
- * Time of completed challenge in seconds
- * @type {number}
- */
-const typedTime = computed(() => (endTime.value - startTime.value) / 1000)
-/**
- * Calculated words per minute typed (uses char count of typer string divided by 5 for avg len of word)
- */
-const wpmAverage = computed(() => Math.floor((typerData.value.length / 5) / (typedTime.value / 60)))
-/**
  * Debug features toggle
  * @type {boolean}
  */
 const debug = ref(false);
-
-/**
- * Sets ref for keeping track of challenge data (letter success/fail, etc.)
- */
-const setData = () => {
-  typerData.value = typerString.value.split("").map((char, idx) => ({ char, isCurrent: idx === 0, isSuccess: undefined }))
-
-  typerInputValue.value = ""
-}
-
-/**
- * Will create data object once typerString is set (will be most useful once typerString is dynamic)
- */
-watch(() => typerString.value, (value) => {
-  if (value) {
-    setData()
-  }
-}, { immediate: true })
-
-/**
- * Catches challenge end time once completed
- */
-watch(() => typerComplete.value, (value) => {
-  if (value) {
-    endTime.value = Date.now()
-  }
-})
-
-/**
- * Handle keypresses during challenge
- *
- * @param {KeyboardEvent} event
- */
-const handleKeydown = (event: KeyboardEvent) => {
-  const currentItem = typerData.value.find((item) => item.isCurrent)
-  const nextItem = typerData.value[currentItemIndex.value + 1]
-
-  if (event.key !== "Shift" && currentItem) {
-
-    // Start timer on first keypress
-    if (currentItemIndex.value === 0 && currentItem.isSuccess === undefined) {
-      startTime.value = Date.now()
-    }
-
-    if (event.key === currentItem.char) {
-
-      currentItem.isSuccess = true
-      currentItem.isCurrent = false
-
-      if (nextItem) {
-        nextItem.isCurrent = true
-      }
-
-    } else {
-      currentItem.isSuccess = false
-    }
-  }
-}
 
 </script>
 
