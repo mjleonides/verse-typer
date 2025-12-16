@@ -21,8 +21,8 @@
           Total Time: {{ store.challengeTime }} seconds - {{ store.wpmAverage }} WPM
       </p>
     </div>
-    <!-- <p v-else>Current Key: {{ currentItem?.char }}</p> -->
 
+    <p v-if="debug">Current Key: {{ store.currentItem?.char }}</p>
     <input ref="typerInput" id="typer-input" name="typer-input" autofocus type="text" :class="{ 'typer-input--hidden': !debug }" v-model="typerInputValue"  @keyup="(event) => store.handleKeypress(event)"/>
 
     <div>

@@ -51,8 +51,8 @@ export const useTyperStore = defineStore("typer", () => {
    * Whether or not challenge is complete
    * @type {boolean}
    */
-  const challengeComplete = computed(() =>
-    currentItem.value ? currentItem.value === undefined : false,
+  const challengeComplete = computed(
+    () => challengeData.value.length > 0 && currentItem.value === undefined,
   )
 
   /**
@@ -139,6 +139,7 @@ export const useTyperStore = defineStore("typer", () => {
     challengeComplete,
     challengeTime,
     challengeActive,
+    currentItem,
     wpmAverage,
     startChallenge,
     handleKeypress,
