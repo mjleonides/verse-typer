@@ -31,11 +31,21 @@ export interface Book {
   totalNumberOfVerses: number
 }
 
+export interface ContentItemPoem {
+  poem: number
+  text: string
+}
+
+export interface ContentItemLineBreak {
+  lineBreak: boolean
+}
+
 export interface Content {
   type: string
   number: number
-  content: Array<string>
+  content: string[] | ContentItemPoem[] | ContentItemLineBreak[]
 }
+
 export interface Chapter {
   content: Content[]
   footnotes: string

@@ -23,7 +23,7 @@
     </div>
 
     <p v-if="debug">Current Key: {{ store.currentItem?.char }}</p>
-    <input ref="typerInput" id="typer-input" name="typer-input" autofocus type="text" :class="{ 'typer-input--hidden': !debug }" v-model="typerInputValue"  @keyup="(event) => store.handleKeypress(event)"/>
+    <input ref="typerInput" id="typer-input" name="typer-input" autofocus type="text" :class="{ 'typer-input--hidden': !debug }" v-model="typerInputValue"  @input="(event) => store.handleInput(event)"/>
 
     <div>
       <button @click="store.startChallenge">Start Challenge</button>

@@ -99,6 +99,7 @@ export const useTyperStore = defineStore("typer", () => {
     scripture.value = await getScripture()
 
     challengeData.value = challengeString.value
+      .replace(/[‘’]/g, "'")
       .split("")
       .map((char, idx) => ({ char, isCurrent: idx === 0, isSuccess: undefined }))
 
@@ -110,17 +111,19 @@ export const useTyperStore = defineStore("typer", () => {
    *
    * @param {KeyboardEvent} event
    */
-  const handleKeypress = (event: KeyboardEvent) => {
+  const handleInput = (event: InputEvent) => {
     const currentItem = challengeData.value.find((item) => item.isCurrent)
     const nextItem = challengeData.value[currentItemIndex.value + 1]
+    console.log(currentItem)
+    console.log(event.data)
 
-    if (event.key !== "Shift" && currentItem) {
+    if (event.data && currentItem) {
       // Start timer on first keypress
       if (currentItemIndex.value === 0 && currentItem.isSuccess === undefined) {
         startTime.value = Date.now()
       }
 
-      if (event.key === currentItem.char) {
+      if (event.data === currentItem.char) {
         currentItem.isSuccess = true
         currentItem.isCurrent = false
 
@@ -142,7 +145,7 @@ export const useTyperStore = defineStore("typer", () => {
     currentItem,
     wpmAverage,
     startChallenge,
-    handleKeypress,
+    handleInput,
     setChallengeData,
   }
 })

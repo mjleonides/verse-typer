@@ -1,6 +1,5 @@
 import booksData from "@/assets/data/helloao/eng_asv/books.json"
-import type { ChapterData } from "@/types/helloao"
-import type { ScriptureData } from "@/types"
+import type { ChapterData, ContentItemPoem, ContentItemLineBreak } from "@/types/helloao"
 import { generateRandomInt } from "@/utils/generateRandomInt"
 
 export default function useHelloAo() {
@@ -33,21 +32,22 @@ export default function useHelloAo() {
     return generateRandomInt({ min: 1, max: numVerses - 5 })
   }
 
-  /**
-   *
-   * @todo
-   * Would be great if this actually returned more data than just the typer string
-   * It should return the challenge string, number of words (num chars / 5), and starting/ending verse  num
-   *
-   * @param chapterData
-   * @returns
-   */
   const createChallengeString = (chapterData: ChapterData, verseStart: number) => {
     const chapterContentArray = chapterData.chapter.content
 
     // Currently limit num of verses to 5, it seems like enough
     const flatContent = chapterContentArray.flatMap((item) => {
-      if (item.number >= verseStart && item.number < verseStart + 1) return item.content
+      if (item.number >= verseStart && item.number < verseStart + 5) {
+        if (
+          typeof item.content[0] === "object" &&
+          ("poem" in item.content[0] || "lineBreak" in item.content[0])
+        ) {
+          return (item.content as ContentItemPoem[] | ContentItemLineBreak[]).map((item) =>
+            "lineBreak" in item ? [""] : [item.text],
+          )
+        }
+        return item.content as [string]
+      }
     })
 
     return flatContent.filter(Boolean).join(" ")
