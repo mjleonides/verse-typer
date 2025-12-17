@@ -5,36 +5,63 @@ import useHelloAo from "@/composables/useHelloAo"
 
 const { getScripture } = useHelloAo()
 
+const checkLocalStorage = (property: string, defaultValue: any) => {
+  const storage = localStorage.getItem("typer")
+
+  return storage ? JSON.parse(storage)[property] : defaultValue
+}
+
 export const useTyperStore = defineStore("typer", () => {
   /**
    *
    */
-  const challengeActive = ref(false)
+  const challengeActive = ref(checkLocalStorage("challengeActive", false))
+
+  /**
+   * Formatted object array for keeping track of challenge data (letter success/fail, etc.)
+   */
+  const challengeData = ref<TyperDataItem[]>(checkLocalStorage("challengeData", []))
+
+  /**
+   * Will contain scripture data returned from useHelloAo composable
+   */
+  const scripture = ref<ScriptureData | undefined>(checkLocalStorage("scripture", undefined))
+
+  /**
+   * Timestamp of first correct keystroke
+   * @type {date}
+   */
+  const startTime = ref(checkLocalStorage("startTime", undefined))
+
+  /**
+   * Timestamp of the success of the last char in typerString
+   * @type {date}
+   */
+  const endTime = ref(checkLocalStorage("endTime", undefined))
 
   /**
    *
    */
   const startChallenge = () => {
     challengeActive.value = true
-
-    setChallengeData()
+    startTime.value = undefined
+    setChallengeData(true)
   }
 
   /**
-   * Will contain scripture data returned from useHelloAo composable
+   * Uses same scripture data but resets timer and success states
    */
-  const scripture = ref<ScriptureData | undefined>()
+  const resetChallenge = () => {
+    startTime.value = undefined
+
+    setChallengeData(false)
+  }
 
   /**
    * Typing challenge string
    * @type {string}
    */
   const challengeString = computed(() => (scripture.value ? scripture.value.content : ""))
-
-  /**
-   * Formatted object array for keeping track of challenge data (letter success/fail, etc.)
-   */
-  const challengeData = ref<TyperDataItem[]>([])
 
   /**
    * Current typerString char being evaluated
@@ -54,18 +81,6 @@ export const useTyperStore = defineStore("typer", () => {
   const challengeComplete = computed(
     () => challengeData.value.length > 0 && currentItem.value === undefined,
   )
-
-  /**
-   * Timestamp of first correct keystroke
-   * @type {date}
-   */
-  const startTime = ref()
-
-  /**
-   * Timestamp of the success of the last char in typerString
-   * @type {date}
-   */
-  const endTime = ref()
 
   /**
    * Catches challenge end time once completed
@@ -95,8 +110,8 @@ export const useTyperStore = defineStore("typer", () => {
   /**
    * Initiates challenge by fetching scripture and setting data
    */
-  const setChallengeData = async () => {
-    scripture.value = await getScripture()
+  const setChallengeData = async (isNew: boolean) => {
+    if (isNew) scripture.value = await getScripture()
 
     challengeData.value = challengeString.value
       .replace(/[‘’]/g, "'")
@@ -114,8 +129,6 @@ export const useTyperStore = defineStore("typer", () => {
   const handleInput = (event: InputEvent) => {
     const currentItem = challengeData.value.find((item) => item.isCurrent)
     const nextItem = challengeData.value[currentItemIndex.value + 1]
-    console.log(currentItem)
-    console.log(event.data)
 
     if (event.data && currentItem) {
       // Start timer on first keypress
@@ -144,8 +157,10 @@ export const useTyperStore = defineStore("typer", () => {
     challengeActive,
     currentItem,
     wpmAverage,
+    startTime,
+    endTime,
     startChallenge,
+    resetChallenge,
     handleInput,
-    setChallengeData,
   }
 })

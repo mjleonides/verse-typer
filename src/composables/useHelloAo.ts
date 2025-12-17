@@ -37,13 +37,13 @@ export default function useHelloAo() {
 
     // Currently limit num of verses to 5, it seems like enough
     const flatContent = chapterContentArray.flatMap((item) => {
-      if (item.number >= verseStart && item.number < verseStart + 5) {
+      if (item.number >= verseStart && item.number < verseStart + 1) {
         if (
           typeof item.content[0] === "object" &&
           ("poem" in item.content[0] || "lineBreak" in item.content[0])
         ) {
           return (item.content as ContentItemPoem[] | ContentItemLineBreak[]).map((item) =>
-            "lineBreak" in item ? [""] : [item.text],
+            "lineBreak" in item ? "" : item.text,
           )
         }
         return item.content as [string]

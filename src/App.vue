@@ -26,8 +26,10 @@
     <input ref="typerInput" id="typer-input" name="typer-input" autofocus type="text" :class="{ 'typer-input--hidden': !debug }" v-model="typerInputValue"  @input="(event) => store.handleInput(event)"/>
 
     <div>
-      <button @click="store.startChallenge">Start Challenge</button>
-      <button @click="store.setChallengeData">Reset</button>
+      <!-- Start/New should fetch new scripture -->
+      <button @click="store.startChallenge">{{ store.challengeActive ? "New" : "Start" }} Challenge</button>
+      <!-- Reset should restart time with same scripture-->
+      <button @click="store.resetChallenge">Reset</button>
       <div>
         <input id="debug" type="checkbox" name="debug"  v-model="debug">
         <label for="debug">Debug</label>
