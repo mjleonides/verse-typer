@@ -5,7 +5,13 @@ import useHelloAo from "@/composables/useHelloAo"
 
 const { getScripture } = useHelloAo()
 
-const checkLocalStorage = (property: string, defaultValue: any) => {
+/**
+ * Reusable function for getters to check the local storage for pre-existing values
+ * @param property Name of getter
+ * @param defaultValue What to use if local storage value does not pre-exist
+ * @returns Value found in storage or default value
+ */
+const checkLocalStorage = (property: string, defaultValue: unknown) => {
   const storage = localStorage.getItem("typer")
 
   return storage ? JSON.parse(storage)[property] : defaultValue
@@ -45,6 +51,7 @@ export const useTyperStore = defineStore("typer", () => {
   const startChallenge = () => {
     challengeActive.value = true
     startTime.value = undefined
+    endTime.value = undefined
     setChallengeData(true)
   }
 
