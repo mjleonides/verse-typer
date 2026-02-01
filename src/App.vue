@@ -21,7 +21,7 @@
       </div>
 
       <div class="typer-text-container">
-        <p class="typer-text" v-if="store.challengeData">
+        <p class="typer-text" v-if="store.scripture">
           <span
             v-for="(item, idx) in store.challengeData"
             :key="`${idx} - ${item.char}`"
@@ -166,7 +166,8 @@ const getAccuracyClass = (accuracy: number) => {
 }
 
 const infoMessage = computed(() => {
-  if (!store.challengeActive) return `Start typing to begin the challenge.`
+  if (!store.challengeActive && !store.challengeComplete)
+    return `Start typing to begin the challenge.`
 
   return ``
 })

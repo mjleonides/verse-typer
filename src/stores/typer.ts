@@ -50,7 +50,6 @@ export const useTyperStore = defineStore("typer", () => {
    */
   const startChallenge = async () => {
     await setChallengeData(true)
-    challengeActive.value = true
     startTime.value = undefined
     endTime.value = undefined
   }
