@@ -58,20 +58,33 @@
     </div>
   </main>
   <div class="actions-container">
-    <!-- Start/New should fetch new scripture -->
-    <button class="button" @click="store.startChallenge" title="New passage">
-      <i class="fa-solid fa-plus fa-xl"></i><span>New</span>
-    </button>
+    <div class="buttons">
+      <!-- Start/New should fetch new scripture -->
+      <button class="button" @click="store.startChallenge" title="New passage">
+        <i class="fa-solid fa-plus fa-xl"></i><span>New</span>
+      </button>
 
-    <!-- Reset should restart time with same scripture-->
-    <button class="button" @click="reset" title="Reset challenge">
-      <i class="fa-solid fa-arrow-rotate-right fa-xl"></i><span>Reset</span>
-    </button>
-    <div>
-      <button class="button" :class="{ 'button--checked': debug }" @click="debug = !debug">
+      <!-- Reset should restart time with same scripture-->
+      <button class="button" @click="reset" title="Reset challenge">
+        <i class="fa-solid fa-arrow-rotate-right fa-xl"></i><span>Reset</span>
+      </button>
+
+      <!-- About -->
+      <button class="button" title="About this project">
+        <i class="fa-regular fa-circle-question fa-xl"></i><span>About</span>
+      </button>
+
+      <!-- Debug -->
+      <button
+        class="button"
+        :class="{ 'button--checked': debug }"
+        v-if="env === 'dev'"
+        @click="debug = !debug"
+      >
         <i class="fa-solid fa-bug fa-xl"></i><span>Debug</span>
       </button>
     </div>
+
     <div class="debug-container">
       <p v-if="debug">Current Key: {{ store.currentItem?.char }}</p>
       <input
@@ -101,6 +114,8 @@ import { useTyperStore } from "@/stores/typer"
 import SkeletonComponent from "./components/SkeletonComponent.vue"
 
 const store = useTyperStore()
+
+const env = import.meta.env.VITE_ENV
 
 /**
  * Keeps DOM focus on typerInput
@@ -200,11 +215,11 @@ body {
   flex-direction: column;
   justify-content: space-between;
   height: 98vh;
-  align-items: center;
+  width: 65%;
+  margin: 0 auto;
 }
 
 .header {
-  width: 65%;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -264,7 +279,6 @@ body {
   border-radius: 8px;
   margin: 10rem auto 1rem;
   padding: 0.5rem 1rem;
-  width: 65%;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55);
 }
 
@@ -318,17 +332,19 @@ body {
 .actions-container {
   margin: 0 auto;
   max-width: max-content;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: 1fr auto;
-  grid-gap: 0.5rem;
+  /* display: flex; */
+  /* gap: 0.5rem; */
+}
+
+.buttons {
+  display: flex;
+  flex-direction: row;
 }
 
 .button {
   cursor: pointer;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   background-color: inherit;
   color: var(--normal-text);
   border-radius: 6px;
@@ -377,5 +393,16 @@ body {
 
 .link {
   color: var(--normal-text);
+}
+
+@media screen and (max-width: 1300px) {
+  #app {
+    width: 90%;
+  }
+
+  .stat {
+    grid-template-columns: 1fr;
+    justify-items: center;
+  }
 }
 </style>
