@@ -6,4 +6,4 @@
 - [x] Fix helloao output when verse is poem
 - [x] Don't refetch scripture on every refresh, but ~~once a day~~~ or manually
   - [x] Store
-- [ ] Style
+- [x] Style

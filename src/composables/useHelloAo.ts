@@ -32,12 +32,15 @@ export default function useHelloAo() {
     return generateRandomInt({ min: 1, max: numVerses - 5 })
   }
 
-  const createChallengeString = (chapterData: ChapterData, verseStart: number) => {
+  const createChallengeString = (
+    chapterData: ChapterData,
+    verseStart: number,
+    verseEnd: number,
+  ) => {
     const chapterContentArray = chapterData.chapter.content
 
-    // Currently limit num of verses to 5, it seems like enough
     const flatContent = chapterContentArray.flatMap((item) => {
-      if (item.number >= verseStart && item.number < verseStart + 1) {
+      if (item.number >= verseStart && item.number <= verseEnd) {
         if (
           typeof item.content[0] === "object" &&
           ("poem" in item.content[0] || "lineBreak" in item.content[0])
@@ -59,14 +62,15 @@ export default function useHelloAo() {
   const getScripture = async () => {
     const chapterData = await getRandomChapter()
     const verseStart = randomVerseStart(chapterData)
-    const content = createChallengeString(chapterData, verseStart)
+    const verseEnd = verseStart + 4
+    const content = createChallengeString(chapterData, verseStart, verseEnd)
 
     return {
       book: chapterData.book.commonName,
       chapter: chapterData.chapter.number,
       translation: chapterData.translation.shortName,
-      verseStart: verseStart,
-      verseEnd: verseStart + 5,
+      verseStart,
+      verseEnd,
       content,
     }
   }

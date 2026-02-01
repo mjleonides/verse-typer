@@ -2,6 +2,7 @@ export interface TyperDataItem {
   char: string
   isCurrent: boolean
   isSuccess: boolean | undefined
+  firstAttempt: boolean | undefined
 }
 export interface ScriptureData {
   book: string

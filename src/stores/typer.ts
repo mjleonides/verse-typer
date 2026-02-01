@@ -19,7 +19,7 @@ const checkLocalStorage = (property: string, defaultValue: unknown) => {
 
 export const useTyperStore = defineStore("typer", () => {
   /**
-   *
+   * Whether or not the challenge has started. The user has started typing.
    */
   const challengeActive = ref(checkLocalStorage("challengeActive", false))
 
@@ -48,18 +48,20 @@ export const useTyperStore = defineStore("typer", () => {
   /**
    *
    */
-  const startChallenge = () => {
+  const startChallenge = async () => {
+    await setChallengeData(true)
     challengeActive.value = true
     startTime.value = undefined
     endTime.value = undefined
-    setChallengeData(true)
   }
 
   /**
    * Uses same scripture data but resets timer and success states
    */
   const resetChallenge = () => {
+    challengeActive.value = false
     startTime.value = undefined
+    endTime.value = undefined
 
     setChallengeData(false)
   }
@@ -96,6 +98,7 @@ export const useTyperStore = defineStore("typer", () => {
     () => challengeComplete.value,
     (value) => {
       if (value) {
+        challengeActive.value = false
         endTime.value = Date.now()
       }
     },
@@ -105,15 +108,29 @@ export const useTyperStore = defineStore("typer", () => {
    * Time of completed challenge in seconds
    * @type {number}
    */
-  const challengeTime = computed(() => (endTime.value - startTime.value) / 1000)
-
+  const challengeTime = computed(() =>
+    startTime.value && endTime.value
+      ? Math.floor((endTime.value - startTime.value) / 1000)
+      : undefined,
+  )
   /**
    * Calculated words per minute typed (uses char count of typer string divided by 5 for avg len of word)
    */
   const wpmAverage = computed(() =>
-    Math.floor(challengeData.value.length / 5 / (challengeTime.value / 60)),
+    challengeTime.value
+      ? Math.floor(challengeData.value.length / 5 / (challengeTime.value / 60))
+      : undefined,
   )
 
+  /**
+   *
+   */
+  const challengeAccuracy = computed(() => {
+    const perfectCharsNo = challengeData.value.filter(({ firstAttempt }) => firstAttempt).length
+    const successCharsNo = challengeData.value.filter(({ isSuccess }) => isSuccess).length
+
+    return Number((perfectCharsNo / successCharsNo).toFixed(2))
+  })
   /**
    * Initiates challenge by fetching scripture and setting data
    */
@@ -123,9 +140,12 @@ export const useTyperStore = defineStore("typer", () => {
     challengeData.value = challengeString.value
       .replace(/[‘’]/g, "'")
       .split("")
-      .map((char, idx) => ({ char, isCurrent: idx === 0, isSuccess: undefined }))
-
-    //   typerInputValue.value = ""
+      .map((char, idx) => ({
+        char,
+        isCurrent: idx === 0,
+        isSuccess: undefined,
+        firstAttempt: undefined,
+      }))
   }
 
   /**
@@ -140,20 +160,39 @@ export const useTyperStore = defineStore("typer", () => {
     if (event.data && currentItem) {
       // Start timer on first keypress
       if (currentItemIndex.value === 0 && currentItem.isSuccess === undefined) {
+        challengeActive.value = true
         startTime.value = Date.now()
       }
 
+      // Success block
       if (event.data === currentItem.char) {
         currentItem.isSuccess = true
         currentItem.isCurrent = false
 
+        if (currentItem.firstAttempt === undefined) {
+          currentItem.firstAttempt = true
+        }
+
         if (nextItem) {
           nextItem.isCurrent = true
         }
+
+        // Fail block
       } else {
         currentItem.isSuccess = false
+
+        if (currentItem.firstAttempt === undefined) {
+          currentItem.firstAttempt = false
+        }
       }
     }
+  }
+
+  /**
+   * Clear data from local storage
+   */
+  const clearStorage = () => {
+    localStorage.removeItem("typer")
   }
 
   return {
@@ -163,11 +202,14 @@ export const useTyperStore = defineStore("typer", () => {
     challengeTime,
     challengeActive,
     currentItem,
+    currentItemIndex,
     wpmAverage,
+    challengeAccuracy,
     startTime,
     endTime,
     startChallenge,
     resetChallenge,
     handleInput,
+    clearStorage,
   }
 })
