@@ -277,7 +277,7 @@ body {
 .main-container {
   background-color: var(--card);
   border-radius: 8px;
-  margin: 10rem auto 1rem;
+  margin: 8rem auto 1rem;
   padding: 0.5rem 1rem;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55);
 }
@@ -332,8 +332,6 @@ body {
 .actions-container {
   margin: 0 auto;
   max-width: max-content;
-  /* display: flex; */
-  /* gap: 0.5rem; */
 }
 
 .buttons {
@@ -398,6 +396,10 @@ body {
 @media screen and (max-width: 1300px) {
   #app {
     width: 90%;
+  }
+
+  .main-container {
+    margin-top: 5vw;
   }
 
   .stat {
