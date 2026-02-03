@@ -19,7 +19,7 @@ const checkLocalStorage = (property: string, defaultValue: unknown) => {
 
 export const useTyperStore = defineStore("typer", () => {
   /**
-   * Whether or not the challenge has started. The user has started typing.
+   * Whether or not the challenge has started aka the user has started typing
    */
   const challengeActive = ref(checkLocalStorage("challengeActive", false))
 
@@ -48,7 +48,7 @@ export const useTyperStore = defineStore("typer", () => {
   /**
    *
    */
-  const startChallenge = async () => {
+  const fetchChallenge = async () => {
     await setChallengeData(true)
     startTime.value = undefined
     endTime.value = undefined
@@ -69,7 +69,7 @@ export const useTyperStore = defineStore("typer", () => {
    * Typing challenge string
    * @type {string}
    */
-  const challengeString = computed(() => (scripture.value ? scripture.value.content : ""))
+  // const challengeString = computed(() => (scripture.value ? scripture.value.content : ""))
 
   /**
    * Current typerString char being evaluated
@@ -136,15 +136,17 @@ export const useTyperStore = defineStore("typer", () => {
   const setChallengeData = async (isNew: boolean) => {
     if (isNew) scripture.value = await getScripture()
 
-    challengeData.value = challengeString.value
-      .replace(/[‘’]/g, "'")
-      .split("")
-      .map((char, idx) => ({
-        char,
-        isCurrent: idx === 0,
-        isSuccess: undefined,
-        firstAttempt: undefined,
-      }))
+    if (scripture.value) {
+      challengeData.value = scripture.value.content
+        .replace(/[‘’]/g, "'")
+        .split("")
+        .map((char, idx) => ({
+          char,
+          isCurrent: idx === 0,
+          isSuccess: undefined,
+          firstAttempt: undefined,
+        }))
+    }
   }
 
   /**
@@ -206,7 +208,7 @@ export const useTyperStore = defineStore("typer", () => {
     challengeAccuracy,
     startTime,
     endTime,
-    startChallenge,
+    fetchChallenge,
     resetChallenge,
     handleInput,
     clearStorage,

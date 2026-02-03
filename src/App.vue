@@ -3,7 +3,8 @@
     <h1 class="heading">Verse Typer</h1>
     <Transition name="info">
       <p v-if="infoMessage" class="info">
-        {{ infoMessage }}<i class="fa-solid fa-circle-info fa-xl"></i>
+        <span v-html="infoMessage"></span>
+        <i class="fa-solid fa-circle-info fa-xl"></i>
       </p>
     </Transition>
   </header>
@@ -44,7 +45,7 @@
       </figure>
       <figure class="stat stat__time">
         <figcaption>Time:</figcaption>
-        <span>{{ store.startTime ? `${showTime} s` : `--` }}</span>
+        <span>{{ store.startTime ? `${displayTime} s` : `--` }}</span>
       </figure>
       <figure class="stat stat__wpm">
         WPM: <span>{{ store.wpmAverage ?? `--` }}</span>
@@ -60,12 +61,12 @@
   <div class="actions-container">
     <div class="buttons">
       <!-- Start/New should fetch new scripture -->
-      <button class="button" @click="store.startChallenge" title="New passage">
+      <button class="button" @click="store.fetchChallenge" title="New passage">
         <i class="fa-solid fa-plus fa-xl"></i><span>New</span>
       </button>
 
       <!-- Reset should restart time with same scripture-->
-      <button class="button" @click="reset" title="Reset challenge">
+      <button class="button" @click="onReset" title="Reset challenge">
         <i class="fa-solid fa-arrow-rotate-right fa-xl"></i><span>Reset</span>
       </button>
 
@@ -118,12 +119,17 @@ const store = useTyperStore()
 const env = import.meta.env.VITE_ENV
 
 /**
+ * If new user or no scripture in store, fetch a new challenge to populate scripture
+ */
+if (!store.scripture) {
+  store.fetchChallenge()
+}
+/**
  * Keeps DOM focus on typerInput
  */
 document.addEventListener("click", () => {
   typerInput.value.focus()
 })
-
 /**
  * Text input element template ref
  */
@@ -153,20 +159,16 @@ setInterval(() => {
     refTime.value = Math.floor((Date.now() - store.startTime) / 1000)
   }
 }, 1000)
-
 const refTime = ref(0)
-
-const showTime = computed(() => {
+const displayTime = computed(() => {
   if (store.challengeComplete) return store.challengeTime
 
   return refTime.value
 })
-
-const reset = () => {
-  refTime.value = 0
-  store.resetChallenge()
-}
-
+/**
+ * For highlighting accuracy stat with color
+ * @param accuracy
+ */
 const getAccuracyClass = (accuracy: number) => {
   if (!accuracy) return `default`
 
@@ -179,13 +181,23 @@ const getAccuracyClass = (accuracy: number) => {
       return `bad`
   }
 }
-
+/**
+ * Dynamically update info message
+ */
 const infoMessage = computed(() => {
   if (!store.challengeActive && !store.challengeComplete)
     return `Start typing to begin the challenge.`
 
+  if (store.challengeComplete)
+    return `Challenge complete! Click <strong>New</strong> to get a new passage.`
+
   return ``
 })
+
+const onReset = () => {
+  refTime.value = 0
+  store.resetChallenge()
+}
 </script>
 
 <style lang="css">
@@ -280,6 +292,7 @@ body {
   margin: 8rem auto 1rem;
   padding: 0.5rem 1rem;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55);
+  width: 100%;
 }
 
 .content-header {
