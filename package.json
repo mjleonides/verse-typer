@@ -1,6 +1,6 @@
 {
-  "name": "daily-typer",
-  "version": "0.0.0",
+  "name": "verse-typer",
+  "version": "1.0",
   "private": true,
   "type": "module",
   "scripts": {

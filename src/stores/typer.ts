@@ -117,7 +117,9 @@ export const useTyperStore = defineStore("typer", () => {
    */
   const wpmAverage = computed(() =>
     challengeTime.value
-      ? Math.floor(challengeData.value.length / 5 / (challengeTime.value / 60))
+      ? Math.floor(
+          ((challengeData.value.length / 5) * challengeAccuracy.value) / (challengeTime.value / 60),
+        )
       : undefined,
   )
 

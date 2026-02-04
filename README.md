@@ -1,45 +1,30 @@
-# daily-typer
+# Verse Typer
 
-This template should help get you started developing with Vue 3 in Vite.
+A minimalist, distraction-free typing challenge that helps you practice typing speed while engaging with Scripture.
 
-## Recommended IDE Setup
+## Features
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+- 📖 Fetches random scripture passages for typing practice.
+- 📊 Tracks typing speed (WPM) and accuracy.
+- ⌨️ Live, character-by-character visual feedback directly in the passage text.
+- 🔄 Allows resetting the challenge or fetching a new passage.
 
-## Type Support for `.vue` Imports in TS
+## Why This Exists
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+As a web developer, improving my typing skills is basically sharpening my proverbial axe. I wanted a simple way to warm up my fingers for the day and get more efficient at typing; the stats create a little competition with myself to get better over time. Now there are plenty of great typing practice sites out there but that gets me to my second motivation.
 
-## Customize configuration
+As a Christian, any time spent with scripture is time well spent. It can be challenging to get in front of the Word as often as I should, so this app provides a fun and interactive way to engage with scripture daily. It's a little more than just reading, it's just one way of interacting with the Word through typing and memorization.
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+I hope this project serves you well and brings you closer to the Word.
 
-## Project Setup
+## Words Per Minute (WPM) Formula
 
-```sh
-npm install
-```
+Accuracy = Correct Characters on First Attempt<sup>1</sup> / Total Characters
 
-### Compile and Hot-Reload for Development
+WPM = (Number of Characters / 5) \* Accuracy / (Time in Minutes)
 
-```sh
-npm run dev
-```
+<sup>1</sup>Accuracy is calculated based on whether each character is typed correctly on the first attempt; corrected mistakes still count as incorrect for accuracy purposes.
 
-### Type-Check, Compile and Minify for Production
+## Attribution
 
-```sh
-npm run build
-```
-
-### Run Unit Tests with [Vitest](https://vitest.dev/)
-
-```sh
-npm run test:unit
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
-```
+Scripture passages are fetched from the [Free Use Bible API](https://bible.helloao.org/). Text is used for educational and personal practice purposes.

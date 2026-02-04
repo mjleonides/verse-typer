@@ -71,9 +71,11 @@
       </button>
 
       <!-- About -->
-      <button class="button" title="About this project">
-        <i class="fa-regular fa-circle-question fa-xl"></i><span>About</span>
-      </button>
+      <a class="link" href="https://github.com/mjleonides/verse-typer" target="_blank">
+        <button class="button" title="About this project" @click="showAbout">
+          <i class="fa-brands fa-github fa-xl"></i><span>About</span>
+        </button>
+      </a>
 
       <!-- Debug -->
       <button
@@ -193,6 +195,9 @@ const infoMessage = computed(() => {
 
   return ``
 })
+
+const aboutModal = ref<HTMLDialogElement>()
+const showAbout = () => aboutModal.value?.showModal()
 
 const onReset = () => {
   refTime.value = 0
@@ -350,6 +355,7 @@ body {
 .buttons {
   display: flex;
   flex-direction: row;
+  justify-content: space-around;
 }
 
 .button {
@@ -404,6 +410,10 @@ body {
 
 .link {
   color: var(--normal-text);
+}
+
+.link:has(> button) {
+  text-decoration: none;
 }
 
 @media screen and (max-width: 1300px) {
