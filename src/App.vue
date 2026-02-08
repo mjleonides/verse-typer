@@ -4,7 +4,7 @@
     <Transition name="info">
       <p v-if="infoMessage" class="info">
         <span v-html="infoMessage"></span>
-        <i class="fa-solid fa-circle-info fa-xl"></i>
+        <i :class="infoIcon"></i>
       </p>
     </Transition>
   </header>
@@ -121,9 +121,10 @@ const store = useTyperStore()
 const env = import.meta.env.VITE_ENV
 
 /**
- * If new user or no scripture in store, fetch a new challenge to populate scripture
+ * If new user or no scripture in store, or if it's a new day since last fetch,
+ * fetch a new challenge to populate scripture
  */
-if (!store.scripture) {
+if (!store.scripture || store.challengeDate !== new Date().toLocaleDateString()) {
   store.fetchChallenge()
 }
 /**
@@ -184,20 +185,24 @@ const getAccuracyClass = (accuracy: number) => {
   }
 }
 /**
- * Dynamically update info message
+ * Dynamically update info message and icon based on challenge state
  */
 const infoMessage = computed(() => {
   if (!store.challengeActive && !store.challengeComplete)
     return `Start typing to begin the challenge.`
 
   if (store.challengeComplete)
-    return `Challenge complete! Click <strong>New</strong> to get a new passage.`
+    return `Come back tomorrow, or click <strong>New</strong> to get a new passage.`
 
   return ``
 })
+const infoIcon = computed(() => {
+  if (!store.challengeActive && !store.challengeComplete) return `fa-solid fa-circle-info fa-xl`
 
-const aboutModal = ref<HTMLDialogElement>()
-const showAbout = () => aboutModal.value?.showModal()
+  if (store.challengeComplete) return `fa-solid fa-trophy fa-xl`
+
+  return ``
+})
 
 const onReset = () => {
   refTime.value = 0
@@ -241,6 +246,11 @@ body {
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
+  gap: 5rem;
+}
+
+.heading {
+  min-width: max-content;
 }
 
 .info {
@@ -249,6 +259,7 @@ body {
   gap: 0.5rem;
   align-items: center;
   color: var(--vague-text);
+  text-align: end;
 }
 
 .info-enter-active,
@@ -294,7 +305,7 @@ body {
 .main-container {
   background-color: var(--card);
   border-radius: 8px;
-  margin: 8rem auto 1rem;
+  margin: 7.5% auto 1rem;
   padding: 0.5rem 1rem;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55);
   width: 100%;
