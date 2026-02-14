@@ -24,6 +24,11 @@ export const useTyperStore = defineStore("typer", () => {
   const challengeActive = ref(checkLocalStorage("challengeActive", false))
 
   /**
+   * The day the challenge was last fetched, for daily challenge purposes (format: MM/DD/YYYY")
+   */
+  const challengeDate = ref(checkLocalStorage("challengeDate", undefined))
+
+  /**
    * Formatted object array for keeping track of challenge data (letter success/fail, etc.)
    */
   const challengeData = ref<TyperDataItem[]>(checkLocalStorage("challengeData", []))
@@ -50,6 +55,8 @@ export const useTyperStore = defineStore("typer", () => {
    */
   const fetchChallenge = async () => {
     await setChallengeData(true)
+
+    challengeDate.value = new Date().toLocaleDateString()
     startTime.value = undefined
     endTime.value = undefined
   }
@@ -201,6 +208,7 @@ export const useTyperStore = defineStore("typer", () => {
   return {
     scripture,
     challengeData,
+    challengeDate,
     challengeComplete,
     challengeTime,
     challengeActive,

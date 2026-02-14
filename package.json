@@ -1,10 +1,11 @@
 {
   "name": "verse-typer",
-  "version": "1.0",
+  "version": "1.1",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:host": "vite --host",
     "build": "run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",
     "test:unit": "vitest",
