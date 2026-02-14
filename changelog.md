@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.1.1 - 2026-02-14
+
+### Fixed
+
+- Changed keyboard shortcuts to use alt instead of ctrl to avoid conflicts with browser shortcuts across different OS
+
 ## v1.1 - 2026-02-13
 
 ### Added
