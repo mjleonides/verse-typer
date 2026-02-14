@@ -61,31 +61,35 @@
   <div class="actions-container">
     <div class="buttons">
       <!-- Start/New should fetch new scripture -->
-      <button class="button" @click="store.fetchChallenge" title="New passage">
-        <i class="fa-solid fa-plus fa-xl"></i><span>New</span>
-      </button>
+      <div class="button-container">
+        <button class="button" @click="store.fetchChallenge" title="New passage">
+          <i class="fa-solid fa-plus fa-xl"></i><span>New</span>
+        </button>
+        <div class="shortcut"><kbd>ctrl + n</kbd></div>
+      </div>
 
       <!-- Reset should restart time with same scripture-->
-      <button class="button" @click="onReset" title="Reset challenge">
-        <i class="fa-solid fa-arrow-rotate-right fa-xl"></i><span>Reset</span>
-      </button>
+      <div class="button-container">
+        <button class="button" @click="onReset" title="Reset challenge">
+          <i class="fa-solid fa-arrow-rotate-right fa-xl"></i><span>Reset</span>
+        </button>
+        <div class="shortcut"><kbd>ctrl + r</kbd></div>
+      </div>
 
       <!-- About -->
       <a class="link" href="https://github.com/mjleonides/verse-typer" target="_blank">
-        <button class="button" title="About this project" @click="showAbout">
+        <button class="button" title="About this project">
           <i class="fa-brands fa-github fa-xl"></i><span>About</span>
         </button>
       </a>
 
       <!-- Debug -->
-      <button
-        class="button"
-        :class="{ 'button--checked': debug }"
-        v-if="env === 'dev'"
-        @click="debug = !debug"
-      >
-        <i class="fa-solid fa-bug fa-xl"></i><span>Debug</span>
-      </button>
+      <div class="button-container" v-if="env === 'dev'">
+        <button class="button" :class="{ 'button--checked': debug }" @click="debug = !debug">
+          <i class="fa-solid fa-bug fa-xl"></i><span>Debug</span>
+        </button>
+        <div class="shortcut"><kbd>ctrl + d</kbd></div>
+      </div>
     </div>
 
     <div class="debug-container">
@@ -132,6 +136,20 @@ if (!store.scripture || store.challengeDate !== new Date().toLocaleDateString())
  */
 document.addEventListener("click", () => {
   typerInput.value.focus()
+})
+document.addEventListener("keyup", (event) => {
+  const key = event.key
+
+  if (event.ctrlKey) {
+    if (key === "n") {
+      store.fetchChallenge()
+    } else if (key === "r") {
+      onReset()
+    } else if (env === "dev" && key === "d") {
+      debug.value = !debug.value
+    }
+  }
+  return
 })
 /**
  * Text input element template ref
@@ -215,6 +233,7 @@ const onReset = () => {
   --bg: #0e0e0e;
   --card: #1a1a1a;
   --border: rgba(255, 255, 255, 0.08);
+  --kbd-bg: rgba(255, 255, 255, 0.2);
 
   --red: #ff3f5c;
   --blue: #3b82f6;
@@ -367,6 +386,14 @@ body {
   display: flex;
   flex-direction: row;
   justify-content: space-around;
+  gap: 1rem;
+}
+
+.button-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
 }
 
 .button {
@@ -391,6 +418,14 @@ body {
 .button:has(> i) {
   padding: 1.25rem 1rem 0.75rem;
   gap: 1rem;
+}
+
+.shortcut {
+  font-size: 0.75rem;
+  color: var(--bg);
+  background-color: var(--kbd-bg);
+  padding: 0.15rem 0.25rem;
+  border-radius: 4px;
 }
 
 .debug-container {
