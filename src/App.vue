@@ -65,7 +65,9 @@
         <button class="button" @click="store.fetchChallenge" title="New passage">
           <i class="fa-solid fa-plus fa-xl"></i><span>New</span>
         </button>
-        <div class="shortcut"><kbd>alt + n</kbd></div>
+        <div class="shortcut">
+          <kbd>ctrl +<br />shift + n</kbd>
+        </div>
       </div>
 
       <!-- Reset should restart time with same scripture-->
@@ -73,7 +75,9 @@
         <button class="button" @click="onReset" title="Reset challenge">
           <i class="fa-solid fa-arrow-rotate-right fa-xl"></i><span>Reset</span>
         </button>
-        <div class="shortcut"><kbd>alt + r</kbd></div>
+        <div class="shortcut">
+          <kbd>^ &#8679; R</kbd>
+        </div>
       </div>
 
       <!-- About -->
@@ -88,7 +92,9 @@
         <button class="button" :class="{ 'button--checked': debug }" @click="debug = !debug">
           <i class="fa-solid fa-bug fa-xl"></i><span>Debug</span>
         </button>
-        <div class="shortcut"><kbd>alt + d</kbd></div>
+        <div class="shortcut">
+          <kbd>ctrl +<br />shift + d</kbd>
+        </div>
       </div>
     </div>
 
@@ -141,9 +147,9 @@ document.addEventListener("click", () => {
  * Keyboard shortcuts for New, Reset, and Debug (dev only)
  */
 document.addEventListener("keyup", (event) => {
-  const key = event.key
+  const key = event.key.toLowerCase()
 
-  if (event.altKey) {
+  if (event.ctrlKey && event.shiftKey) {
     if (key === "n") {
       store.fetchChallenge()
     } else if (key === "r") {
