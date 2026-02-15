@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.1.2 - 2026-02-15
+
+### Fixed
+
+- Again changed keyboard shortcuts to use more obscure combos
+
 ## v1.1.1 - 2026-02-14
 
 ### Fixed
