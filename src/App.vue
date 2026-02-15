@@ -66,7 +66,7 @@
           <i class="fa-solid fa-plus fa-xl"></i><span>New</span>
         </button>
         <div class="shortcut">
-          <kbd>ctrl +<br />shift + n</kbd>
+          <kbd>^enter</kbd>
         </div>
       </div>
 
@@ -76,7 +76,7 @@
           <i class="fa-solid fa-arrow-rotate-right fa-xl"></i><span>Reset</span>
         </button>
         <div class="shortcut">
-          <kbd>^ &#8679; R</kbd>
+          <kbd>esc</kbd>
         </div>
       </div>
 
@@ -93,7 +93,7 @@
           <i class="fa-solid fa-bug fa-xl"></i><span>Debug</span>
         </button>
         <div class="shortcut">
-          <kbd>ctrl +<br />shift + d</kbd>
+          <kbd>^.</kbd>
         </div>
       </div>
     </div>
@@ -149,15 +149,19 @@ document.addEventListener("click", () => {
 document.addEventListener("keyup", (event) => {
   const key = event.key.toLowerCase()
 
-  if (event.ctrlKey && event.shiftKey) {
-    if (key === "n") {
-      store.fetchChallenge()
-    } else if (key === "r") {
-      onReset()
-    } else if (env === "dev" && key === "d") {
-      debug.value = !debug.value
-    }
+  if (event.ctrlKey && key === "enter") {
+    return store.fetchChallenge()
   }
+
+  if (store.challengeActive && key === "escape") {
+    return onReset()
+  }
+
+  if (env === "dev" && event.ctrlKey && key === ".") {
+    debug.value = !debug.value
+    return
+  }
+
   return
 })
 /**
