@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.1.3 - 2026-03-03
+
+### Fixed
+
+- Fixed reset keybinding not working when challenge is complete
+
 ## v1.1.2 - 2026-02-15
 
 ### Fixed
