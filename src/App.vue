@@ -153,7 +153,7 @@ document.addEventListener("keyup", (event) => {
     return store.fetchChallenge()
   }
 
-  if (store.challengeActive && key === "escape") {
+  if (key === "escape") {
     return onReset()
   }
 
